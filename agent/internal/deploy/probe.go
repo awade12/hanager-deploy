@@ -9,24 +9,22 @@ func (p *Pipeline) probeURL(ctx context.Context, container, url string, timeoutS
 	if timeoutSec < 1 {
 		timeoutSec = 2
 	}
-	err := p.docker.Exec(ctx, container, []string{
-		"wget", "-qO-", fmt.Sprintf("--timeout=%d", timeoutSec), url,
-	})
-	if err == nil {
-		return nil
-	}
-	script := fmt.Sprintf(
-		`python3 -c "import urllib.request; urllib.request.urlopen(%q, timeout=%d)"`,
+	py := fmt.Sprintf(
+		"import urllib.request; urllib.request.urlopen(%q, timeout=%d)",
 		url, timeoutSec,
 	)
-	if err2 := p.docker.Exec(ctx, container, []string{"sh", "-c", script}); err2 == nil {
+	if err := p.docker.Exec(ctx, container, []string{"python3", "-c", py}); err == nil {
 		return nil
 	}
-	err3 := p.docker.Exec(ctx, container, []string{
+	if err := p.docker.Exec(ctx, container, []string{
 		"curl", "-sf", "--max-time", fmt.Sprintf("%d", timeoutSec), url,
-	})
-	if err3 == nil {
+	}); err == nil {
 		return nil
 	}
-	return fmt.Errorf("probe %s: %w", url, err)
+	if err := p.docker.Exec(ctx, container, []string{
+		"wget", "-qO-", fmt.Sprintf("--timeout=%d", timeoutSec), url,
+	}); err == nil {
+		return nil
+	}
+	return fmt.Errorf("probe %s failed", url)
 }
