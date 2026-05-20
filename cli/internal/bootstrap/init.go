@@ -59,13 +59,15 @@ func Run(ctx context.Context, cfg config.Config, opts Options) error {
 	}
 	unit := `[Unit]
 Description=hangar agent
-After=docker.service
-Requires=docker.service
+After=network-online.target docker.service
+Wants=docker.service
 
 [Service]
+Type=simple
 ExecStart=/usr/local/bin/hangar-agent -config /etc/hangar/agent.json
-Restart=always
-RestartSec=3
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=120
 
 [Install]
 WantedBy=multi-user.target

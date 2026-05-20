@@ -23,7 +23,8 @@ func NewRecoverer(store *Store, d *docker.Client, logger *slog.Logger) *Recovere
 func (r *Recoverer) Run(ctx context.Context) error {
 	states, err := r.store.ListAll()
 	if err != nil {
-		return err
+		r.logger.Warn("list deploy states", "err", err)
+		return nil
 	}
 	for _, st := range states {
 		if st.IsTerminal() {

@@ -37,16 +37,20 @@ func doctorCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Println(out)
-			if strings.Contains(out, "inactive") || strings.Contains(out, "failed") || strings.Contains(out, "health_failed") {
+			fmt.Println(strings.TrimSpace(out))
+			if strings.Contains(out, "inactive") || strings.Contains(out, "failed") || strings.Contains(out, "health_failed") || strings.Contains(out, "activating") {
 				fmt.Println()
-				fmt.Println("Agent is not healthy. On the VPS run:")
+				fmt.Println("==> recent agent logs")
+				logs, _ := runSSHOutput(cfg, target, "sudo journalctl -u hangar-agent -n 25 --no-pager 2>/dev/null || true")
+				fmt.Println(strings.TrimSpace(logs))
+				fmt.Println()
+				fmt.Println("Fix on the VPS:")
 				fmt.Printf("  ssh -i %s %s\n", cfg.KeyPath, target)
+				fmt.Println("  sudo systemctl restart docker")
 				fmt.Println("  sudo systemctl restart hangar-agent")
-				fmt.Println("  sudo systemctl status hangar-agent")
 				fmt.Println("  curl http://127.0.0.1:8741/health")
 				fmt.Println()
-				fmt.Println("Or from your Mac after SSH works:")
+				fmt.Println("Or reinstall agent from your Mac:")
 				fmt.Println("  hangar init")
 				return fmt.Errorf("hangar-agent not running on VPS")
 			}

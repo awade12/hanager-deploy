@@ -40,7 +40,7 @@ func main() {
 	}
 
 	dockerClient := docker.New()
-	if err := dockerClient.Available(context.Background()); err != nil {
+	if err := waitDocker(context.Background(), dockerClient, 60*time.Second, logger); err != nil {
 		logger.Error("docker unavailable", "err", err)
 		os.Exit(1)
 	}
@@ -91,4 +91,20 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_ = httpSrv.Shutdown(ctx)
+}
+
+func waitDocker(ctx context.Context, d *docker.Client, timeout time.Duration, logger *slog.Logger) error {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		if err := d.Available(ctx); err == nil {
+			return nil
+		}
+		logger.Info("waiting for docker")
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(2 * time.Second):
+		}
+	}
+	return d.Available(ctx)
 }
