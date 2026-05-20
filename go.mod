@@ -2,8 +2,6 @@ module github.com/awade12/hanager-deploy
 
 go 1.22
 
-toolchain go1.22.12
-
 require (
 	github.com/google/uuid v1.6.0
 	github.com/pelletier/go-toml/v2 v2.2.3
