@@ -16,8 +16,10 @@ Ensure `$(go env GOPATH)/bin` is on your `PATH`.
 **One-liner installer** (Go or GitHub release binaries):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/awade12/hanager-deploy/main/scripts/install.sh | bash
+curl -fsSL "https://raw.githubusercontent.com/awade12/hanager-deploy/main/scripts/install.sh?$(date +%s)" | bash
 ```
+
+You should see `hangar installer v2` first. If you still see `hangar-sh` or `BASH_SOURCE` errors, your shell cached an old script — use the `go install` commands below instead.
 
 **Laptop workflow** (after install):
 

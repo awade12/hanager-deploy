@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+INSTALLER_VERSION=2
+echo "hangar installer v${INSTALLER_VERSION}"
+
 MODULE="${HANGAR_MODULE:-github.com/awade12/hanager-deploy}"
 REF="${HANGAR_VERSION:-latest}"
 REPO="${HANGAR_REPO:-awade12/hanager-deploy}"
