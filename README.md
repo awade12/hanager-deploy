@@ -37,6 +37,24 @@ hangar deploy
 
 `setup` creates `~/.ssh/hangar_deploy`, copies it to the server (`ssh-copy-id`), writes `~/.hangar/config.json`, and installs the agent.
 
+### Public HTTPS domains
+
+```bash
+hangar domains enable --email you@example.com
+```
+
+Then in `hangar.toml`:
+
+```toml
+[service.http]
+public = true
+domains = ["api.yourdomain.com"]
+```
+
+Point DNS **A record** `api.yourdomain.com` → your VPS IP, then `hangar deploy`. Caddy obtains Let's Encrypt certs automatically.
+
+Open `https://api.yourdomain.com` (no port number).
+
 **Manual workflow** (if you prefer):
 
 ```bash

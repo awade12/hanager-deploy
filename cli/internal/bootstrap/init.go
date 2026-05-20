@@ -43,7 +43,9 @@ func Run(ctx context.Context, cfg config.Config, opts Options) error {
 	agentJSON := fmt.Sprintf(`{
   "listen_addr": "127.0.0.1:8741",
   "data_dir": %q,
-  "caddy_http_port": 8877
+  "caddy_http_port": 8877,
+  "public_edge": false,
+  "acme_email": ""
 }
 `, opts.DataDir)
 	if err := sshRun(ctx, cfg, "sudo tee /etc/hangar/agent.json > /dev/null", agentJSON); err != nil {

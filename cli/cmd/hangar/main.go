@@ -31,6 +31,7 @@ func newRoot() *cobra.Command {
 	}
 	root.AddCommand(
 		setupCmd(),
+		domainsCmd(),
 		doctorCmd(),
 		deployCmd(),
 		logsCmd(),

@@ -62,7 +62,12 @@ func main() {
 
 	caddyClient := caddy.New(cfg.CaddyAdminURL)
 	caddyDir := filepath.Join(cfg.DataDir, "caddy")
-	edge := caddy.NewEnsurer(dockerClient, caddyClient, cfg.CaddyContainer, cfg.CaddyHTTPPort, caddyDir)
+	edgeMode := caddy.EdgeMode{
+		Public:    cfg.PublicEdge,
+		ACMEEmail: cfg.ACMEEmail,
+		LocalPort: cfg.CaddyHTTPPort,
+	}
+	edge := caddy.NewEnsurer(dockerClient, caddyClient, cfg.CaddyContainer, edgeMode, caddyDir)
 	rt := runtime.NewStore(config.RuntimeDir(cfg.DataDir))
 	pipeline := deploy.NewPipeline(store, rt, dockerClient, caddyClient, edge, envResolver, dbSvc, logger)
 	rollback := deploy.NewRollback(rt, dockerClient, caddyClient)

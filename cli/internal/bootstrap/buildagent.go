@@ -11,7 +11,7 @@ import (
 	"github.com/awade12/hanager-deploy/cli/internal/version"
 )
 
-const agentModuleVersion = "v0.2.6"
+const agentModuleVersion = "v0.3.0"
 
 func BuildAgentForPlatform(ctx context.Context, plat Platform, explicit string) (path string, cleanup func(), err error) {
 	if explicit != "" {

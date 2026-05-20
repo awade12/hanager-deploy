@@ -28,6 +28,7 @@ type RunDetachedOpts struct {
 	Network string
 	Ports   []string
 	Mounts  []string
+	Env     []string
 	Command []string
 }
 
@@ -69,6 +70,9 @@ func (c *Client) RunDetached(ctx context.Context, opts RunDetachedOpts) (string,
 	for _, m := range opts.Mounts {
 		args = append(args, "-v", m)
 	}
+	for _, e := range opts.Env {
+		args = append(args, "-e", e)
+	}
 	args = append(args, opts.Image)
 	args = append(args, opts.Command...)
 	return c.run(ctx, args...)
@@ -87,6 +91,20 @@ func (c *Client) Start(ctx context.Context, nameOrID string) error {
 func (c *Client) Remove(ctx context.Context, nameOrID string) error {
 	_, err := c.run(ctx, "rm", "-f", nameOrID)
 	return err
+}
+
+func (c *Client) ContainerEnv(ctx context.Context, name, key string) (string, error) {
+	prefix := key + "="
+	out, err := c.run(ctx, "inspect", "-f", "{{range .Config.Env}}{{println .}}{{end}}", name)
+	if err != nil {
+		return "", err
+	}
+	for _, line := range strings.Split(out, "\n") {
+		if strings.HasPrefix(line, prefix) {
+			return strings.TrimPrefix(line, prefix), nil
+		}
+	}
+	return "", nil
 }
 
 func (c *Client) IsRunning(ctx context.Context, name string) (bool, error) {

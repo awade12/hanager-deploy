@@ -25,13 +25,15 @@ func New(adminURL string) *Client {
 	}
 }
 
-func (c *Client) EnsureServer(ctx context.Context, listen string) error {
+func (c *Client) EnsureServer(ctx context.Context, mode EdgeMode) error {
 	cfg := map[string]any{
-		"listen": []string{listen},
+		"listen": mode.ListenAddrs(),
 		"routes": []any{},
-		"automatic_https": map[string]any{
-			"disable": true,
-		},
+	}
+	if mode.Public {
+		cfg["automatic_https"] = map[string]any{}
+	} else {
+		cfg["automatic_https"] = map[string]any{"disable": true}
 	}
 	body, _ := json.Marshal(cfg)
 	path := c.adminURL + "/config/apps/http/servers/srv0"
@@ -41,18 +43,20 @@ func (c *Client) EnsureServer(ctx context.Context, listen string) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if err := c.do(req); err != nil {
-		return c.postServer(ctx, listen)
+		return c.postServer(ctx, mode)
 	}
 	return nil
 }
 
-func (c *Client) postServer(ctx context.Context, listen string) error {
+func (c *Client) postServer(ctx context.Context, mode EdgeMode) error {
 	cfg := map[string]any{
-		"listen": []string{listen},
+		"listen": mode.ListenAddrs(),
 		"routes": []any{},
-		"automatic_https": map[string]any{
-			"disable": true,
-		},
+	}
+	if mode.Public {
+		cfg["automatic_https"] = map[string]any{}
+	} else {
+		cfg["automatic_https"] = map[string]any{"disable": true}
 	}
 	body, _ := json.Marshal(cfg)
 	path := c.adminURL + "/config/apps/http/servers/srv0"

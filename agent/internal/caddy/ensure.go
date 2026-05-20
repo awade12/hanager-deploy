@@ -14,16 +14,16 @@ type Ensurer struct {
 	docker    *docker.Client
 	caddy     *Client
 	container string
-	httpPort  int
+	mode      EdgeMode
 	configDir string
 }
 
-func NewEnsurer(d *docker.Client, c *Client, container string, httpPort int, configDir string) *Ensurer {
+func NewEnsurer(d *docker.Client, c *Client, container string, mode EdgeMode, configDir string) *Ensurer {
 	return &Ensurer{
 		docker:    d,
 		caddy:     c,
 		container: container,
-		httpPort:  httpPort,
+		mode:      mode,
 		configDir: configDir,
 	}
 }
@@ -38,8 +38,7 @@ func (e *Ensurer) Ensure(ctx context.Context) error {
 	if err := e.waitAdmin(ctx); err != nil {
 		return err
 	}
-	listen := fmt.Sprintf(":%d", e.httpPort)
-	return e.caddy.EnsureServer(ctx, listen)
+	return e.caddy.EnsureServer(ctx, e.mode)
 }
 
 func (e *Ensurer) waitAdmin(ctx context.Context) error {
@@ -60,21 +59,28 @@ func (e *Ensurer) waitAdmin(ctx context.Context) error {
 }
 
 func (e *Ensurer) ensureCaddyContainer(ctx context.Context) error {
+	wantMode := "local"
+	if e.mode.Public {
+		wantMode = "public"
+	}
 	running, err := e.docker.IsRunning(ctx, e.container)
 	if err == nil && running {
-		return e.docker.ConnectNetwork(ctx, docker.EdgeNetwork(), e.container)
+		cur, _ := e.docker.ContainerEnv(ctx, e.container, "HANGAR_EDGE")
+		if cur == wantMode {
+			return e.docker.ConnectNetwork(ctx, docker.EdgeNetwork(), e.container)
+		}
 	}
 	_ = e.docker.Remove(ctx, e.container)
 
 	if err := os.MkdirAll(e.configDir, 0o755); err != nil {
 		return err
 	}
+	if e.mode.Public {
+		_ = os.MkdirAll(filepath.Join(e.configDir, "data"), 0o755)
+		_ = os.MkdirAll(filepath.Join(e.configDir, "config"), 0o755)
+	}
 	caddyfile := filepath.Join(e.configDir, "Caddyfile")
-	content := `{
-	admin 0.0.0.0:2019
-}
-`
-	if err := os.WriteFile(caddyfile, []byte(content), 0o644); err != nil {
+	if err := os.WriteFile(caddyfile, []byte(e.mode.CaddyfileGlobal()), 0o644); err != nil {
 		return err
 	}
 
@@ -82,15 +88,15 @@ func (e *Ensurer) ensureCaddyContainer(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	mounts := []string{fmt.Sprintf("%s:/etc/caddy/Caddyfile:ro", caddyfileAbs)}
+	mounts = append(mounts, e.mode.ExtraMounts(e.configDir)...)
 	_, err = e.docker.RunDetached(ctx, docker.RunDetachedOpts{
 		Name:    e.container,
 		Image:   "caddy:2.8-alpine",
 		Network: docker.EdgeNetwork(),
-		Ports: []string{
-			"127.0.0.1:2019:2019",
-			fmt.Sprintf("127.0.0.1:%d:%d", e.httpPort, e.httpPort),
-		},
-		Mounts:  []string{fmt.Sprintf("%s:/etc/caddy/Caddyfile:ro", caddyfileAbs)},
+		Ports:   e.mode.DockerPorts(),
+		Mounts:  mounts,
+		Env:     []string{"HANGAR_EDGE=" + wantMode},
 		Command: []string{"caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"},
 	})
 	return err

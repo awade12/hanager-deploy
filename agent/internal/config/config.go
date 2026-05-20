@@ -14,6 +14,8 @@ type Config struct {
 	CaddyAdminURL  string `json:"caddy_admin_url"`
 	CaddyHTTPPort  int    `json:"caddy_http_port"`
 	CaddyContainer string `json:"caddy_container"`
+	PublicEdge     bool   `json:"public_edge"`
+	ACMEEmail      string `json:"acme_email"`
 }
 
 func Default() Config {
