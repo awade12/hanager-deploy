@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/awade12/hanager-deploy/cli/internal/config"
+	"github.com/awade12/hanager-deploy/cli/internal/version"
 	"github.com/spf13/cobra"
+	"runtime/debug"
 )
 
 func configCmd() *cobra.Command {
@@ -81,16 +82,18 @@ func configInitCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if token == "" {
-				token = prompt(reader, "Agent token (optional): ")
-			}
 
 			if !skipSSHCheck {
+				printConfigInitBuild()
 				fmt.Printf("testing SSH to %s@%s ...\n", user, host)
-				if err := testSSH(user, host, keyPath); err != nil {
+				if err := config.TestSSH(user, host, keyPath); err != nil {
 					return err
 				}
 				fmt.Println("SSH OK")
+			}
+
+			if token == "" {
+				token = prompt(reader, "Agent token (optional): ")
 			}
 
 			cfg := config.Default()
@@ -135,44 +138,10 @@ func promptDefault(reader *bufio.Reader, label, def string) string {
 	return line
 }
 
-func testSSH(user, host, keyPath string) error {
-	args := sshTestArgs(user, host, keyPath, true)
-	cmd := exec.Command("ssh", args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err == nil {
-		return nil
+func printConfigInitBuild() {
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		fmt.Printf("(%s %s)\n", version.String(), info.Main.Version)
+		return
 	}
-
-	fmt.Println("non-interactive SSH failed; retrying (enter key passphrase if prompted) ...")
-	args = sshTestArgs(user, host, keyPath, false)
-	cmd = exec.Command("ssh", args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf(`ssh failed: %w
-
-if your key has a passphrase, load it first:
-  ssh-add --apple-use-keychain %s
-
-or skip the check:
-  hangar config init --skip-ssh-check ...`, err, keyPath)
-	}
-	return nil
-}
-
-func sshTestArgs(user, host, keyPath string, batch bool) []string {
-	args := []string{
-		"-i", keyPath,
-		"-o", "IdentitiesOnly=yes",
-		"-o", "ConnectTimeout=10",
-		"-o", "StrictHostKeyChecking=accept-new",
-	}
-	if batch {
-		args = append(args, "-o", "BatchMode=yes")
-	}
-	args = append(args, user+"@"+host, "echo ok")
-	return args
+	fmt.Printf("(%s — run: go install %s/cli/cmd/hangar@latest)\n", version.String(), version.Module())
 }

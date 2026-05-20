@@ -116,7 +116,7 @@ func sshRun(ctx context.Context, cfg config.Config, remoteCmd, stdin string) err
 }
 
 func scp(cfg config.Config, local, remote string) error {
-	args := []string{}
+	args := []string{"-F", "/dev/null", "-o", "PreferredAuthentications=publickey", "-o", "PasswordAuthentication=no"}
 	if cfg.KeyPath != "" {
 		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
 	}
@@ -131,7 +131,7 @@ func scp(cfg config.Config, local, remote string) error {
 }
 
 func sshArgs(cfg config.Config, remoteCmd string) []string {
-	args := []string{}
+	args := []string{"-F", "/dev/null", "-o", "PreferredAuthentications=publickey", "-o", "PasswordAuthentication=no"}
 	if cfg.KeyPath != "" {
 		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
 	}

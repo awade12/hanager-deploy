@@ -43,12 +43,15 @@ func startOnce(cfg config.Config) (*Tunnel, error) {
 	bind := fmt.Sprintf("%d:%s", cfg.LocalPort, cfg.RemoteAgent)
 	target := fmt.Sprintf("%s@%s", user, cfg.Host)
 	args := []string{
+		"-F", "/dev/null",
 		"-N",
 		"-L", bind,
 		"-p", strconv.Itoa(port),
 		"-o", "ExitOnForwardFailure=yes",
 		"-o", "StrictHostKeyChecking=accept-new",
 		"-o", "ConnectTimeout=10",
+		"-o", "PreferredAuthentications=publickey",
+		"-o", "PasswordAuthentication=no",
 	}
 	if cfg.KeyPath != "" {
 		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
