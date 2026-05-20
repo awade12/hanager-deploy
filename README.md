@@ -27,17 +27,22 @@ curl -fsSL "https://raw.githubusercontent.com/awade12/hanager-deploy/main/script
 
 You should see `hangar installer v2` first. If you still see `hangar-sh` or `BASH_SOURCE` errors, your shell cached an old script — use the `go install` commands below instead.
 
-**Laptop workflow** (after install):
+**One command setup** (recommended):
 
 ```bash
-hangar config init          # writes ~/.hangar/config.json
-hangar init                 # bootstraps VPS: docker, agent systemd
+hangar setup ubuntu@YOUR_VPS_IP
 cd ~/code/my-app
-hangar secret set KEY val
 hangar deploy
-hangar logs
-hangar rollback
-hangar status
+```
+
+`setup` creates `~/.ssh/hangar_deploy`, copies it to the server (`ssh-copy-id`), writes `~/.hangar/config.json`, and installs the agent.
+
+**Manual workflow** (if you prefer):
+
+```bash
+hangar config init --skip-ssh-check ...
+hangar init
+hangar deploy
 ```
 
 `hangar init` finds `hangar-agent` on your PATH, or runs `go install` for you if Go is available.

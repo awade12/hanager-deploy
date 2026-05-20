@@ -24,7 +24,7 @@ func ResolveAgentBinary(ctx context.Context, explicit string) (string, error) {
 	if _, err := exec.LookPath("go"); err != nil {
 		return "", fmt.Errorf("hangar-agent not on PATH; install with: go install %s/agent/cmd/hangar-agent@latest", version.Module())
 	}
-	install := version.Module() + "/agent/cmd/hangar-agent@latest"
+	install := version.Module() + "/agent/cmd/hangar-agent@v0.1.0"
 	cmd := exec.CommandContext(ctx, "go", "install", install)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

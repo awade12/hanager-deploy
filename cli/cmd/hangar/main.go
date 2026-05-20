@@ -30,6 +30,7 @@ func newRoot() *cobra.Command {
 		Short: "hangar deployment cli",
 	}
 	root.AddCommand(
+		setupCmd(),
 		deployCmd(),
 		logsCmd(),
 		rollbackCmd(),

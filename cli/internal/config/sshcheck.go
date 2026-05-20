@@ -4,16 +4,21 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
 func TestSSH(user, host, keyPath string) error {
+	return TestSSHPort(user, host, 22, keyPath)
+}
+
+func TestSSHPort(user, host string, port int, keyPath string) error {
 	if _, err := os.Stat(keyPath); err != nil {
 		return fmt.Errorf("ssh key %s: %w", keyPath, err)
 	}
 
 	try := func(batch bool) error {
-		args := sshArgs(user, host, keyPath, batch)
+		args := sshArgs(user, host, port, keyPath, batch)
 		cmd := exec.Command("ssh", args...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
@@ -31,7 +36,7 @@ func TestSSH(user, host, keyPath string) error {
 		return nil
 	}
 
-	cmdLine := "ssh " + strings.Join(sshArgs(user, host, keyPath, true), " ")
+	cmdLine := "ssh " + strings.Join(sshArgs(user, host, port, keyPath, true), " ")
 	return fmt.Errorf(`ssh test failed
 
 run this in your terminal:
@@ -44,7 +49,7 @@ or skip this check:
   hangar config init --skip-ssh-check --host %s --user %s --key-path %s`, cmdLine, keyPath, host, user, keyPath)
 }
 
-func sshArgs(user, host, keyPath string, batch bool) []string {
+func sshArgs(user, host string, port int, keyPath string, batch bool) []string {
 	args := []string{
 		"-F", "/dev/null",
 		"-i", keyPath,
@@ -53,6 +58,9 @@ func sshArgs(user, host, keyPath string, batch bool) []string {
 		"-o", "PasswordAuthentication=no",
 		"-o", "ConnectTimeout=15",
 		"-o", "StrictHostKeyChecking=accept-new",
+	}
+	if port != 0 && port != 22 {
+		args = append(args, "-p", strconv.Itoa(port))
 	}
 	if batch {
 		args = append(args, "-o", "BatchMode=yes")
