@@ -8,12 +8,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/hangar-sh/hangar/cli/internal/agentclient"
-	"github.com/hangar-sh/hangar/cli/internal/bootstrap"
-	"github.com/hangar-sh/hangar/cli/internal/config"
-	"github.com/hangar-sh/hangar/cli/internal/version"
-	"github.com/hangar-sh/hangar/pkg/archive"
-	"github.com/hangar-sh/hangar/pkg/schema"
+	"github.com/awade12/hanager-deploy/cli/internal/agentclient"
+	"github.com/awade12/hanager-deploy/cli/internal/bootstrap"
+	"github.com/awade12/hanager-deploy/cli/internal/config"
+	"github.com/awade12/hanager-deploy/cli/internal/version"
+	"github.com/awade12/hanager-deploy/pkg/archive"
+	"github.com/awade12/hanager-deploy/pkg/schema"
 	"github.com/spf13/cobra"
 )
 

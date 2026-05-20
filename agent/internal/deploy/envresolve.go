@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/hangar-sh/hangar/agent/internal/database"
-	"github.com/hangar-sh/hangar/agent/internal/secret"
-	"github.com/hangar-sh/hangar/pkg/schema"
+	"github.com/awade12/hanager-deploy/agent/internal/database"
+	"github.com/awade12/hanager-deploy/agent/internal/secret"
+	"github.com/awade12/hanager-deploy/pkg/schema"
 )
 
 type EnvResolver struct {

@@ -1,4 +1,4 @@
-module github.com/hangar-sh/hangar
+module github.com/awade12/hanager-deploy
 
 go 1.22
 

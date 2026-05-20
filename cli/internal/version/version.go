@@ -18,5 +18,5 @@ func String() string {
 }
 
 func Module() string {
-	return "github.com/hangar-sh/hangar"
+	return "github.com/awade12/hanager-deploy"
 }

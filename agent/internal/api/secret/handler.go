@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/hangar-sh/hangar/agent/internal/secret"
+	"github.com/awade12/hanager-deploy/agent/internal/secret"
 )
 
 type Handler struct {

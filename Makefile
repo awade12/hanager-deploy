@@ -2,7 +2,7 @@
 
 VERSION ?= dev
 COMMIT ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo none)
-LDFLAGS := -s -w -X github.com/hangar-sh/hangar/cli/internal/version.Version=$(VERSION) -X github.com/hangar-sh/hangar/cli/internal/version.Commit=$(COMMIT)
+LDFLAGS := -s -w -X github.com/awade12/hanager-deploy/cli/internal/version.Version=$(VERSION) -X github.com/awade12/hanager-deploy/cli/internal/version.Commit=$(COMMIT)
 
 # Prefer /usr/local/go (install-go.sh) over Ubuntu's golang-go 1.18
 GO := $(firstword $(wildcard /usr/local/go/bin/go) $(shell PATH="/usr/local/go/bin:$$PATH" command -v go 2>/dev/null) go)

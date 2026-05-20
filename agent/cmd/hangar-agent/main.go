@@ -11,14 +11,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/hangar-sh/hangar/agent/internal/api"
-	"github.com/hangar-sh/hangar/agent/internal/caddy"
-	"github.com/hangar-sh/hangar/agent/internal/config"
-	"github.com/hangar-sh/hangar/agent/internal/database"
-	"github.com/hangar-sh/hangar/agent/internal/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/docker"
-	"github.com/hangar-sh/hangar/agent/internal/runtime"
-	"github.com/hangar-sh/hangar/agent/internal/secret"
+	"github.com/awade12/hanager-deploy/agent/internal/api"
+	"github.com/awade12/hanager-deploy/agent/internal/caddy"
+	"github.com/awade12/hanager-deploy/agent/internal/config"
+	"github.com/awade12/hanager-deploy/agent/internal/database"
+	"github.com/awade12/hanager-deploy/agent/internal/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/docker"
+	"github.com/awade12/hanager-deploy/agent/internal/runtime"
+	"github.com/awade12/hanager-deploy/agent/internal/secret"
 )
 
 func main() {

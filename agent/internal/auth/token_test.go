@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/hangar-sh/hangar/agent/internal/auth"
+	"github.com/awade12/hanager-deploy/agent/internal/auth"
 )
 
 func TestMiddlewareRejectsMissingToken(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/hangar-sh/hangar/agent/internal/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/docker"
+	"github.com/awade12/hanager-deploy/agent/internal/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/docker"
 )
 
 func TestRecoverBuildingMarksFailed(t *testing.T) {

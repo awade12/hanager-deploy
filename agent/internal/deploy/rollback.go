@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hangar-sh/hangar/agent/internal/caddy"
-	"github.com/hangar-sh/hangar/agent/internal/docker"
-	"github.com/hangar-sh/hangar/agent/internal/runtime"
+	"github.com/awade12/hanager-deploy/agent/internal/caddy"
+	"github.com/awade12/hanager-deploy/agent/internal/docker"
+	"github.com/awade12/hanager-deploy/agent/internal/runtime"
 )
 
 type Rollback struct {

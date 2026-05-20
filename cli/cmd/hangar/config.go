@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/hangar-sh/hangar/cli/internal/config"
+	"github.com/awade12/hanager-deploy/cli/internal/config"
 	"github.com/spf13/cobra"
 )
 

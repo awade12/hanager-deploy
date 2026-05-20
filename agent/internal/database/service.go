@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hangar-sh/hangar/agent/internal/docker"
-	"github.com/hangar-sh/hangar/pkg/schema"
+	"github.com/awade12/hanager-deploy/agent/internal/docker"
+	"github.com/awade12/hanager-deploy/pkg/schema"
 )
 
 type Service struct {

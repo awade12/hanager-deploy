@@ -36,7 +36,7 @@ jobs:
           VERSION: ${{ github.ref_name }}
           COMMIT: ${{ github.sha }}
         run: |
-          ldflags="-s -w -X github.com/hangar-sh/hangar/cli/internal/version.Version=${VERSION#v} -X github.com/hangar-sh/hangar/cli/internal/version.Commit=${COMMIT:0:7}"
+          ldflags="-s -w -X github.com/awade12/hanager-deploy/cli/internal/version.Version=${VERSION#v} -X github.com/awade12/hanager-deploy/cli/internal/version.Commit=${COMMIT:0:7}"
           GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "$ldflags" -o hangar-${GOOS}-${GOARCH} ./cli/cmd/hangar
           GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "$ldflags" -o hangar-agent-${GOOS}-${GOARCH} ./agent/cmd/hangar-agent
 

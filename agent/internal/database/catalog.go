@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hangar-sh/hangar/pkg/fsutil"
+	"github.com/awade12/hanager-deploy/pkg/fsutil"
 )
 
 type Record struct {

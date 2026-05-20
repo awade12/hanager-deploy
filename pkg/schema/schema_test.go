@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hangar-sh/hangar/pkg/schema"
+	"github.com/awade12/hanager-deploy/pkg/schema"
 )
 
 func TestParseValidFixture(t *testing.T) {

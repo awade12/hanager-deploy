@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hangar-sh/hangar/pkg/duration"
-	"github.com/hangar-sh/hangar/pkg/schema"
+	"github.com/awade12/hanager-deploy/pkg/duration"
+	"github.com/awade12/hanager-deploy/pkg/schema"
 )
 
 func (p *Pipeline) waitHealthy(ctx context.Context, manifest *schema.Manifest, containers []ContainerRecord) error {

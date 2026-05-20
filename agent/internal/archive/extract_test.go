@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hangar-sh/hangar/agent/internal/archive"
+	"github.com/awade12/hanager-deploy/agent/internal/archive"
 )
 
 func TestExtractTarGz(t *testing.T) {

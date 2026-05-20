@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
-MODULE="${HANGAR_MODULE:-github.com/hangar-sh/hangar}"
+MODULE="${HANGAR_MODULE:-github.com/awade12/hanager-deploy}"
 REF="${HANGAR_VERSION:-latest}"
-REPO="${HANGAR_REPO:-hangar-sh/hangar}"
+REPO="${HANGAR_REPO:-awade12/hanager-deploy}"
 INSTALL_DIR="${HANGAR_INSTALL_DIR:-}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+LOCAL_INSTALL=0
 
-if [[ -z "${HANGAR_MODULE:-}" && -f "${REPO_ROOT}/go.mod" ]]; then
-  if grep -q 'module github.com/hangar-sh/hangar' "${REPO_ROOT}/go.mod" 2>/dev/null; then
-    LOCAL_INSTALL=1
+if [[ -t 0 ]] && [[ -n "${BASH_SOURCE[0]+x}" ]]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+  if [[ -z "${HANGAR_MODULE:-}" && -f "${REPO_ROOT}/go.mod" ]]; then
+    if grep -q 'module github.com/awade12/hanager-deploy' "${REPO_ROOT}/go.mod" 2>/dev/null; then
+      LOCAL_INSTALL=1
+    fi
   fi
 fi
 
@@ -33,15 +36,14 @@ install_with_go() {
     echo "error: need Go 1.22+ (got: ${ver:-missing})" >&2
     exit 1
   fi
-  if [[ "${LOCAL_INSTALL:-}" == "1" ]]; then
+  if [[ "${LOCAL_INSTALL}" == "1" ]]; then
     echo "==> installing from local repo ${REPO_ROOT}"
     (cd "${REPO_ROOT}" && go install ./cli/cmd/hangar && go install ./agent/cmd/hangar-agent)
     return 0
   fi
-  echo "==> installing hangar CLI and agent via go install (${REF})"
+  echo "==> installing hangar CLI and agent via go install (${MODULE}@${REF})"
   go install "${MODULE}/cli/cmd/hangar@${REF}"
   go install "${MODULE}/agent/cmd/hangar-agent@${REF}"
-  return 0
 }
 
 install_from_release() {
@@ -84,27 +86,41 @@ install_from_release() {
   echo "installed to ${dest}"
 }
 
+verify_bins() {
+  local bindir="${1}"
+  local missing=0
+  for bin in hangar hangar-agent; do
+    if [[ ! -x "${bindir}/${bin}" ]]; then
+      echo "error: ${bindir}/${bin} not found after install" >&2
+      missing=1
+    fi
+  done
+  return "${missing}"
+}
+
 main() {
-  if install_with_go; then
-    :
-  elif install_from_release; then
-    :
-  else
-    echo "install failed: need Go 1.22+ or a GitHub release binary" >&2
-    echo "  go install ${MODULE}/cli/cmd/hangar@${REF}" >&2
-    echo "  go install ${MODULE}/agent/cmd/hangar-agent@${REF}" >&2
-    exit 1
+  if ! install_with_go; then
+    if ! install_from_release; then
+      echo "install failed: need Go 1.22+ or a GitHub release binary" >&2
+      echo "  go install ${MODULE}/cli/cmd/hangar@${REF}" >&2
+      echo "  go install ${MODULE}/agent/cmd/hangar-agent@${REF}" >&2
+      exit 1
+    fi
   fi
 
   local bindir
   bindir="${INSTALL_DIR:-$(go_bin_dir)}"
+  if ! verify_bins "${bindir}"; then
+    exit 1
+  fi
+
   echo
   echo "Installed:"
   echo "  ${bindir}/hangar"
   echo "  ${bindir}/hangar-agent"
   if [[ ":${PATH}:" != *":${bindir}:"* ]]; then
     echo
-    echo "Add to PATH (e.g. ~/.bashrc or ~/.zshrc):"
+    echo "Add to PATH (e.g. ~/.zshrc):"
     echo "  export PATH=\"${bindir}:\$PATH\""
   fi
   echo

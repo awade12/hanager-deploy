@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hangar-sh/hangar/agent/internal/database"
-	"github.com/hangar-sh/hangar/agent/internal/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/secret"
+	"github.com/awade12/hanager-deploy/agent/internal/database"
+	"github.com/awade12/hanager-deploy/agent/internal/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/secret"
 )
 
 func TestEnvResolver(t *testing.T) {

@@ -1,14 +1,14 @@
 # hangar
 
-Self-hosted deployment platform. See [project.md](./project.md).
+Self-hosted deployment platform. Repo: [github.com/awade12/hanager-deploy](https://github.com/awade12/hanager-deploy). See [project.md](./project.md).
 
 ## Install (any machine — no repo needed)
 
 **With Go 1.22+:**
 
 ```bash
-go install github.com/hangar-sh/hangar/cli/cmd/hangar@latest
-go install github.com/hangar-sh/hangar/agent/cmd/hangar-agent@latest
+go install github.com/awade12/hanager-deploy/cli/cmd/hangar@latest
+go install github.com/awade12/hanager-deploy/agent/cmd/hangar-agent@latest
 ```
 
 Ensure `$(go env GOPATH)/bin` is on your `PATH`.
@@ -16,7 +16,7 @@ Ensure `$(go env GOPATH)/bin` is on your `PATH`.
 **One-liner installer** (Go or GitHub release binaries):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hangar-sh/hangar/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/awade12/hanager-deploy/main/scripts/install.sh | bash
 ```
 
 **Laptop workflow** (after install):

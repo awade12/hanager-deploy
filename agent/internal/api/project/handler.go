@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/hangar-sh/hangar/agent/internal/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/runtime"
+	"github.com/awade12/hanager-deploy/agent/internal/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/runtime"
 )
 
 type Handler struct {

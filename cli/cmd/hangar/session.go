@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 
-	"github.com/hangar-sh/hangar/cli/internal/agentclient"
-	"github.com/hangar-sh/hangar/cli/internal/config"
-	"github.com/hangar-sh/hangar/cli/internal/tunnel"
+	"github.com/awade12/hanager-deploy/cli/internal/agentclient"
+	"github.com/awade12/hanager-deploy/cli/internal/config"
+	"github.com/awade12/hanager-deploy/cli/internal/tunnel"
 )
 
 func withAgent(ctx context.Context, fn func(*agentclient.Client, config.Config) error) error {

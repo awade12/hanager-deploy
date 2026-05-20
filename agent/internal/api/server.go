@@ -3,16 +3,16 @@ package api
 import (
 	"net/http"
 
-	"github.com/hangar-sh/hangar/agent/internal/api/database"
-	deployapi "github.com/hangar-sh/hangar/agent/internal/api/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/api/health"
-	projectapi "github.com/hangar-sh/hangar/agent/internal/api/project"
-	secretapi "github.com/hangar-sh/hangar/agent/internal/api/secret"
-	"github.com/hangar-sh/hangar/agent/internal/auth"
-	"github.com/hangar-sh/hangar/agent/internal/deploy"
-	"github.com/hangar-sh/hangar/agent/internal/runtime"
-	"github.com/hangar-sh/hangar/agent/internal/secret"
-	dbpkg "github.com/hangar-sh/hangar/agent/internal/database"
+	"github.com/awade12/hanager-deploy/agent/internal/api/database"
+	deployapi "github.com/awade12/hanager-deploy/agent/internal/api/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/api/health"
+	projectapi "github.com/awade12/hanager-deploy/agent/internal/api/project"
+	secretapi "github.com/awade12/hanager-deploy/agent/internal/api/secret"
+	"github.com/awade12/hanager-deploy/agent/internal/auth"
+	"github.com/awade12/hanager-deploy/agent/internal/deploy"
+	"github.com/awade12/hanager-deploy/agent/internal/runtime"
+	"github.com/awade12/hanager-deploy/agent/internal/secret"
+	dbpkg "github.com/awade12/hanager-deploy/agent/internal/database"
 )
 
 type Server struct {

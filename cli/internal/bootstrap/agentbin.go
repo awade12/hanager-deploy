@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/hangar-sh/hangar/cli/internal/version"
+	"github.com/awade12/hanager-deploy/cli/internal/version"
 )
 
 func ResolveAgentBinary(ctx context.Context, explicit string) (string, error) {
