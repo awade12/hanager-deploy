@@ -52,13 +52,8 @@ func Run(ctx context.Context, target Target, opts Options) error {
 	fmt.Printf("==> wrote %s\n", path)
 
 	fmt.Println("==> installing hangar agent on VPS")
-	agentBin, err := bootstrap.ResolveAgentBinary(ctx, "")
-	if err != nil {
-		return err
-	}
 	if err := bootstrap.Run(ctx, cfg, bootstrap.Options{
-		AgentBinary: agentBin,
-		DataDir:     opts.DataDir,
+		DataDir: opts.DataDir,
 	}); err != nil {
 		return err
 	}

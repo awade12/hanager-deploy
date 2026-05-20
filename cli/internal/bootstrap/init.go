@@ -19,9 +19,12 @@ func Run(ctx context.Context, cfg config.Config, opts Options) error {
 	if cfg.Host == "" {
 		return fmt.Errorf("set host in ~/.hangar/config.json")
 	}
-	if _, err := os.Stat(opts.AgentBinary); err != nil {
-		return fmt.Errorf("agent binary %s: %w", opts.AgentBinary, err)
+	agentPath, cleanup, err := ResolveAgentForVPS(ctx, cfg, opts.AgentBinary)
+	if err != nil {
+		return err
 	}
+	defer cleanup()
+
 	if opts.DataDir == "" {
 		opts.DataDir = "/var/lib/hangar"
 	}
@@ -30,18 +33,7 @@ func Run(ctx context.Context, cfg config.Config, opts Options) error {
 	if err := sshRun(ctx, cfg, "bash -s", script); err != nil {
 		return fmt.Errorf("bootstrap script: %w", err)
 	}
-	tmp, err := os.CreateTemp("", "hangar-agent-*")
-	if err != nil {
-		return err
-	}
-	tmpPath := tmp.Name()
-	_ = tmp.Close()
-	defer os.Remove(tmpPath)
-
-	if err := copyFile(opts.AgentBinary, tmpPath); err != nil {
-		return err
-	}
-	if err := scp(cfg, tmpPath, "/tmp/hangar-agent"); err != nil {
+	if err := scp(cfg, agentPath, "/tmp/hangar-agent"); err != nil {
 		return err
 	}
 	install := fmt.Sprintf("sudo install -m 755 /tmp/hangar-agent /usr/local/bin/hangar-agent && sudo mkdir -p %s /etc/hangar", opts.DataDir)

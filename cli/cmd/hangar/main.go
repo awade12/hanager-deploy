@@ -317,12 +317,8 @@ func initCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			agentPath, err := bootstrap.ResolveAgentBinary(cmd.Context(), agentBin)
-			if err != nil {
-				return err
-			}
 			return bootstrap.Run(cmd.Context(), cfg, bootstrap.Options{
-				AgentBinary: agentPath,
+				AgentBinary: agentBin,
 				DataDir:     dataDir,
 			})
 		},

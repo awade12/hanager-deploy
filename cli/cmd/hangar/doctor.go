@@ -38,6 +38,12 @@ func doctorCmd() *cobra.Command {
 				return err
 			}
 			fmt.Println(strings.TrimSpace(out))
+			fileOut, _ := runSSHOutput(cfg, target, "file /usr/local/bin/hangar-agent 2>/dev/null || true")
+			if strings.Contains(fileOut, "Mach-O") || strings.Contains(fileOut, "macOS") {
+				fmt.Println()
+				fmt.Println("Wrong binary on VPS (Mac build installed on Linux). From your Mac run:")
+				fmt.Println("  hangar init")
+			}
 			if strings.Contains(out, "inactive") || strings.Contains(out, "failed") || strings.Contains(out, "health_failed") || strings.Contains(out, "activating") {
 				fmt.Println()
 				fmt.Println("==> recent agent logs")
