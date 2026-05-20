@@ -5,7 +5,7 @@ INSTALLER_VERSION=2
 echo "hangar installer v${INSTALLER_VERSION}"
 
 MODULE="${HANGAR_MODULE:-github.com/awade12/hanager-deploy}"
-REF="${HANGAR_VERSION:-latest}"
+REF="${HANGAR_VERSION:-v0.1.0}"
 REPO="${HANGAR_REPO:-awade12/hanager-deploy}"
 INSTALL_DIR="${HANGAR_INSTALL_DIR:-}"
 LOCAL_INSTALL=0

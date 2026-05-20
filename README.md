@@ -7,8 +7,14 @@ Self-hosted deployment platform. Repo: [github.com/awade12/hanager-deploy](https
 **With Go 1.22+:**
 
 ```bash
-go install github.com/awade12/hanager-deploy/cli/cmd/hangar@latest
-go install github.com/awade12/hanager-deploy/agent/cmd/hangar-agent@latest
+go install github.com/awade12/hanager-deploy/cli/cmd/hangar@v0.1.0
+go install github.com/awade12/hanager-deploy/agent/cmd/hangar-agent@v0.1.0
+```
+
+If `@latest` installs an old build, use `@v0.1.0` or:
+
+```bash
+GOPROXY=direct go install github.com/awade12/hanager-deploy/cli/cmd/hangar@main
 ```
 
 Ensure `$(go env GOPATH)/bin` is on your `PATH`.
