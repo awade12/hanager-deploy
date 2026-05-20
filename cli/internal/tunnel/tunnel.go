@@ -31,6 +31,9 @@ func Start(cfg config.Config) (*Tunnel, error) {
 	if agentHealthy(port) {
 		return &Tunnel{shared: true}, nil
 	}
+	if PortInUse(port) {
+		_ = killSSHOnPort(port)
+	}
 	var last error
 	for attempt := 0; attempt < 3; attempt++ {
 		if attempt > 0 && agentHealthy(port) {
