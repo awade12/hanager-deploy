@@ -58,6 +58,7 @@ func configShowCmd() *cobra.Command {
 
 func configInitCmd() *cobra.Command {
 	var host, user, keyPath, token string
+	var skipSSHCheck bool
 	cmd := &cobra.Command{
 		Use:   "init",
 		Short: "create ~/.hangar/config.json for laptop → VPS deploys",
@@ -84,11 +85,13 @@ func configInitCmd() *cobra.Command {
 				token = prompt(reader, "Agent token (optional): ")
 			}
 
-			fmt.Printf("testing SSH to %s@%s ...\n", user, host)
-			if err := testSSH(user, host, keyPath); err != nil {
-				return err
+			if !skipSSHCheck {
+				fmt.Printf("testing SSH to %s@%s ...\n", user, host)
+				if err := testSSH(user, host, keyPath); err != nil {
+					return err
+				}
+				fmt.Println("SSH OK")
 			}
-			fmt.Println("SSH OK")
 
 			cfg := config.Default()
 			cfg.Host = host
@@ -112,6 +115,7 @@ func configInitCmd() *cobra.Command {
 	cmd.Flags().StringVar(&user, "user", "", "SSH user")
 	cmd.Flags().StringVar(&keyPath, "key-path", "", "SSH private key path")
 	cmd.Flags().StringVar(&token, "token", "", "agent bearer token")
+	cmd.Flags().BoolVar(&skipSSHCheck, "skip-ssh-check", false, "write config without testing SSH")
 	return cmd
 }
 
@@ -132,18 +136,43 @@ func promptDefault(reader *bufio.Reader, label, def string) string {
 }
 
 func testSSH(user, host, keyPath string) error {
+	args := sshTestArgs(user, host, keyPath, true)
+	cmd := exec.Command("ssh", args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err == nil {
+		return nil
+	}
+
+	fmt.Println("non-interactive SSH failed; retrying (enter key passphrase if prompted) ...")
+	args = sshTestArgs(user, host, keyPath, false)
+	cmd = exec.Command("ssh", args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf(`ssh failed: %w
+
+if your key has a passphrase, load it first:
+  ssh-add --apple-use-keychain %s
+
+or skip the check:
+  hangar config init --skip-ssh-check ...`, err, keyPath)
+	}
+	return nil
+}
+
+func sshTestArgs(user, host, keyPath string, batch bool) []string {
 	args := []string{
 		"-i", keyPath,
 		"-o", "IdentitiesOnly=yes",
 		"-o", "ConnectTimeout=10",
-		"-o", "BatchMode=yes",
 		"-o", "StrictHostKeyChecking=accept-new",
-		user + "@" + host, "echo ok",
 	}
-	cmd := exec.Command("ssh", args...)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("ssh failed: %s", strings.TrimSpace(string(out)))
+	if batch {
+		args = append(args, "-o", "BatchMode=yes")
 	}
-	return nil
+	args = append(args, user+"@"+host, "echo ok")
+	return args
 }
