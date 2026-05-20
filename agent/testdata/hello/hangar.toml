@@ -1,0 +1,24 @@
+schema = 1
+
+[project]
+name = "hello"
+region = "local"
+
+[[service]]
+name = "web"
+dockerfile = "Dockerfile"
+port = 8080
+replicas = 1
+
+[service.healthcheck]
+path = "/"
+interval = "2s"
+timeout = "2s"
+grace_period = "20s"
+
+[service.http]
+public = true
+domains = ["hello.hangar.local"]
+
+[env]
+MESSAGE = "hi"

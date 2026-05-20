@@ -1,0 +1,8 @@
+{
+	# prototype only — production agent binds admin to localhost
+	admin 0.0.0.0:2019
+}
+
+:8080 {
+	reverse_proxy backend_a:80
+}

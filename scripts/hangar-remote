@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [[ -x "${ROOT}/bin/hangar" ]]; then
+  CLI="${ROOT}/bin/hangar"
+elif command -v hangar >/dev/null 2>&1; then
+  CLI="hangar"
+else
+  echo "hangar CLI not found. Run: ${ROOT}/scripts/setup-laptop.sh" >&2
+  exit 1
+fi
+
+if [[ ! -f "${HOME}/.hangar/config.json" ]]; then
+  echo "missing ~/.hangar/config.json — run: ${ROOT}/scripts/setup-laptop.sh" >&2
+  exit 1
+fi
+
+exec "${CLI}" "$@"

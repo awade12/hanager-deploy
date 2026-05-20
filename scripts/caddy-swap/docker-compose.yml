@@ -1,0 +1,27 @@
+services:
+  caddy:
+    image: caddy:2.8-alpine
+    ports:
+      - "8080:8080"
+      - "2019:2019"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    networks:
+      - swapnet
+
+  backend_a:
+    image: nginx:alpine
+    volumes:
+      - ./nginx-a.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - swapnet
+
+  backend_b:
+    image: nginx:alpine
+    volumes:
+      - ./nginx-b.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - swapnet
+
+networks:
+  swapnet:

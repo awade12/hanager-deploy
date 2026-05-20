@@ -1,0 +1,10 @@
+{
+  "host": "your-vps.example.com",
+  "user": "ubuntu",
+  "port": 22,
+  "key_path": "~/.ssh/id_rsa",
+  "token": "",
+  "tenant": "default",
+  "local_port": 8741,
+  "remote_agent": "127.0.0.1:8741"
+}

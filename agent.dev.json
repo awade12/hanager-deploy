@@ -1,0 +1,8 @@
+{
+  "listen_addr": "127.0.0.1:8741",
+  "data_dir": "./.hangar-data",
+  "token": "",
+  "caddy_admin_url": "http://127.0.0.1:2019",
+  "caddy_http_port": 8877,
+  "caddy_container": "hangar-caddy"
+}

@@ -1,0 +1,27 @@
+---
+description: Hangar design rules from project.md
+alwaysApply: true
+---
+
+# Hangar architecture
+
+Check every change against `project.md`.
+
+1. **CLI mutates everything** — no control-plane web UI in v1.
+2. **One agent HTTP API** — cli is the only v1 client; do not split backends.
+3. **State on disk first** — atomic writes before side effects; agent must resume after crash.
+4. **Caddy swap gates traffic** — failures before swap must not affect live requests.
+5. **Secrets are refs in hangar.toml** — `$secret:name` only; never literal secret values.
+6. **Multi-tenant** — tenant scopes projects and resources; not in the toml file.
+7. **Secure VPS defaults** — via `hangar init`, not a separate security product.
+
+## Repo roots
+
+- `agent/` — daemon on the VPS
+- `cli/` — user-facing binary
+- `pkg/schema` — shared `hangar.toml` parse + validate
+- `scripts/` — spikes and ops scripts (e.g. caddy swap prototype)
+
+## Build order (current phase)
+
+Done or in progress: caddy swap spike → `pkg/schema` → agent skeleton. Next: docker build/run + caddy wiring, then cli `deploy`.

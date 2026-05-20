@@ -1,0 +1,59 @@
+schema = 1
+
+[project]
+name = "chronalife"
+region = "ash"
+
+[[service]]
+name = "api"
+dockerfile = "./Dockerfile"
+command = "bun run start"
+port = 3000
+replicas = 2
+
+[service.healthcheck]
+path = "/healthz"
+interval = "10s"
+timeout = "2s"
+grace_period = "30s"
+
+[service.resources]
+cpu = "0.5"
+memory = "512MB"
+
+[service.http]
+public = true
+domains = ["api.chronalife.app"]
+
+[[service]]
+name = "worker"
+dockerfile = "./Dockerfile"
+command = "bun run worker"
+replicas = 1
+
+[service.resources]
+cpu = "0.25"
+memory = "256MB"
+
+[[database]]
+name = "main"
+engine = "postgres"
+version = "16"
+size = "10GB"
+
+[[database]]
+name = "cache"
+engine = "redis"
+version = "7"
+
+[env]
+NODE_ENV = "production"
+DATABASE_URL = "$db:main"
+CACHE_URL = "$db:cache"
+SENTRY_DSN = "$secret:sentry_dsn"
+
+[deploy]
+strategy = "rolling"
+max_unavailable = 0
+pre_deploy = "bun run db:migrate"
+pre_deploy_service = "api"

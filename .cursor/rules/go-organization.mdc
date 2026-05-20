@@ -1,0 +1,40 @@
+---
+description: Go layout, file size limits, and naming for hangar
+globs: "**/*.go"
+alwaysApply: false
+---
+
+# Go organization
+
+## Layout
+
+- `pkg/` — shared libraries (schema, fsutil). No `internal/` here; importable by agent and cli.
+- `agent/internal/` — agent-only code. Group by domain, one concern per package.
+- `cli/internal/` — cli-only code, same rules.
+- Name files by role: `auth/token.go`, `deploy/store.go`, `api/deploy/handler.go` — not `utils.go` or `helpers.go`.
+
+## File size
+
+- **Hard cap: 500 lines per file.** Before approaching it, extract to a sibling file in the same package or to `pkg/` if shared.
+- Prefer many small files over few large ones.
+
+## Packages
+
+- `main` only in `cmd/*/main.go` — thin: load config, wire deps, run.
+- HTTP handlers live under `agent/internal/api/<resource>/`.
+- Business logic in domain packages (`deploy`, `auth`, `secret`) — handlers call into them.
+
+## Imports
+
+- Standard library, blank line, third party, blank line, `github.com/hangar-sh/hangar/...`.
+- No circular imports; push shared types to `pkg/schema`.
+
+## Errors
+
+- Wrap with `%w`; domain packages define typed errors in `errors.go`.
+- Return validation errors as structured lists, not opaque strings.
+
+## Tests
+
+- Table-driven tests; fixtures in `testdata/` next to the package.
+- `_test.go` files stay with the code they test.

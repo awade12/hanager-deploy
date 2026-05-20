@@ -1,0 +1,9 @@
+/bin/
+.hangar-data/
+/dist/
+*.test
+coverage.out
+.idea/
+.vscode/
+*.log
+scripts/caddy-swap/.run/
