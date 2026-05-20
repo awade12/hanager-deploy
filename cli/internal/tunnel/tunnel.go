@@ -51,7 +51,7 @@ func startOnce(cfg config.Config) (*Tunnel, error) {
 		"-o", "ConnectTimeout=10",
 	}
 	if cfg.KeyPath != "" {
-		args = append(args, "-i", cfg.KeyPath)
+		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
 	}
 	args = append(args, target)
 	cmd := exec.Command("ssh", args...)

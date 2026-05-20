@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
 	"github.com/awade12/hanager-deploy/cli/internal/config"
@@ -74,9 +73,13 @@ func configInitCmd() *cobra.Command {
 				user = promptDefault(reader, "SSH user", "ubuntu")
 			}
 			if keyPath == "" {
-				keyPath = promptDefault(reader, "SSH key path", "~/.ssh/id_rsa")
+				keyPath = promptDefault(reader, "SSH key path", "~/.ssh/id_ed25519")
 			}
-			keyPath = expandHome(keyPath)
+			var err error
+			keyPath, err = config.ExpandKeyPath(keyPath)
+			if err != nil {
+				return err
+			}
 			if token == "" {
 				token = prompt(reader, "Agent token (optional): ")
 			}
@@ -128,19 +131,15 @@ func promptDefault(reader *bufio.Reader, label, def string) string {
 	return line
 }
 
-func expandHome(path string) string {
-	if strings.HasPrefix(path, "~/") {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return path
-		}
-		return filepath.Join(home, path[2:])
-	}
-	return path
-}
-
 func testSSH(user, host, keyPath string) error {
-	args := []string{"-i", keyPath, "-o", "ConnectTimeout=10", "-o", "BatchMode=yes", user + "@" + host, "echo ok"}
+	args := []string{
+		"-i", keyPath,
+		"-o", "IdentitiesOnly=yes",
+		"-o", "ConnectTimeout=10",
+		"-o", "BatchMode=yes",
+		"-o", "StrictHostKeyChecking=accept-new",
+		user + "@" + host, "echo ok",
+	}
 	cmd := exec.Command("ssh", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {

@@ -64,6 +64,13 @@ func Load() (Config, error) {
 	if cfg.Port == 0 {
 		cfg.Port = 22
 	}
+	if cfg.KeyPath != "" {
+		expanded, err := ExpandKeyPath(cfg.KeyPath)
+		if err != nil {
+			return cfg, err
+		}
+		cfg.KeyPath = expanded
+	}
 	return cfg, nil
 }
 

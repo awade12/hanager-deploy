@@ -118,12 +118,12 @@ func sshRun(ctx context.Context, cfg config.Config, remoteCmd, stdin string) err
 func scp(cfg config.Config, local, remote string) error {
 	args := []string{}
 	if cfg.KeyPath != "" {
-		args = append(args, "-i", cfg.KeyPath)
+		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
 	}
 	if cfg.Port != 0 {
 		args = append(args, "-P", fmt.Sprintf("%d", cfg.Port))
 	}
-	args = append(args, local, sshTarget(cfg)+":"+remote)
+	args = append(args, "-o", "StrictHostKeyChecking=accept-new", local, sshTarget(cfg)+":"+remote)
 	cmd := exec.Command("scp", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -133,7 +133,7 @@ func scp(cfg config.Config, local, remote string) error {
 func sshArgs(cfg config.Config, remoteCmd string) []string {
 	args := []string{}
 	if cfg.KeyPath != "" {
-		args = append(args, "-i", cfg.KeyPath)
+		args = append(args, "-i", cfg.KeyPath, "-o", "IdentitiesOnly=yes")
 	}
 	if cfg.Port != 0 {
 		args = append(args, "-p", fmt.Sprintf("%d", cfg.Port))
