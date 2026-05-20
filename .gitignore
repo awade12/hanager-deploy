@@ -7,4 +7,6 @@ coverage.out
 .vscode/
 *.log
 scripts/caddy-swap/.run/
-hangar
+/hangar
+/bin/hangar
+/bin/hangar-agent
